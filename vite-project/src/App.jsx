@@ -25,7 +25,7 @@ export default function App() {
   }, [])
 
   const handleLogin = async() => {
-     const {error , data} = await supabase.auth.singInWith0Auth({
+     const {error , data} = await supabase.auth.signInWithAuth({
        provider: "github"
      });
      if (error) {
@@ -45,10 +45,11 @@ export default function App() {
       <button onClick={handleLogin}>Inicio sesion</button>   
       
       <Post
-       titulo={"Viaje a misiones"}
-       descripcion={"Un invierno calido"}
+              
+       titulo={"Un invierno calido"}
+       descripcion={"Una semana dificil de olvidar y llena de recuerdos"}
        link={"./img/cataratas.webp"}
-       parrafo={""}
+       parrafo={"Hermosas vaciones con demaciado calor en la temporada 2023"}
       />
       <Footer/>
 

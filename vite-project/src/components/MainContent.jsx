@@ -1,4 +1,4 @@
 export default function MainContent () {
-  return MutationRecord
-
+  return <main></main>
+    
 }
