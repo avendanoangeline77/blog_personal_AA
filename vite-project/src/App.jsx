@@ -8,39 +8,54 @@ export default function App() {
   const[user, setUser] = useState(null)
   
   useEffect(() => {
-    const getSession = async () =>{
-      //destructuracion => nos permite obtener la propiedad decianda ,van entre llaves
+      const session = supabase.auth.getSession();
+      setUser(session?.user)
+      
+      
+      const {
+        data: {subscription}
+       } = supabase.auth.onAuthStateChange((event, session) =>{
+        switch (event) { 
+         case "SIGNED_IN":
+          setUser(session?.user);
+          break;
+         case "SIGNED_OUT":
+          setUser(null);
+          break;
+        default:
+          console.log("caso no estinado");
 
-      const { data,error } = await supabase.auth.getSession();
-      if (error) {
-        console.log(error);
-      }
-       else{
-        setUser(data?.session?.user);
-       }
-    };
+        }
+      });
 
 
-    getSession();
-  }, [])
+      return () => {
+        subscription.unsubscribe();
+
+      };
+      },[]);
 
   const handleLogin = async() => {
-     const {error , data} = await supabase.auth.signInWithAuth({
-       provider: "github"
+     await supabase.auth.signInWithOAuth({
+       provider: "github",
      });
-     if (error) {
-      console.log(error);
-     }
-     else {
-      console.log(data);
-     }
+    };
+    
+  const handleLogout = async () => {
+     await supabase.auth.signOut();
   };
 
-
-
-
   return(
-    <>
+     <>
+        {user ? (
+          <div>
+            <h2>Authenticated</h2>
+            <button onClick={handleLogout}>logout</button>
+          </div>
+        ) : (
+          <button onClick={handleLogin}>login Github</button>
+        )}
+    
       <Header/>
       <button onClick={handleLogin}>Inicio sesion</button>   
       
@@ -54,12 +69,5 @@ export default function App() {
       <Footer/>
 
     </>
-
-
-
-
-
   )
-
-
 }
